@@ -2,7 +2,9 @@ name: Deploy Vite to GitHub Pages
 
 on:
   push:
-    branches: ["main"]
+    branches: ['main']
+  # Allows the deploy to be re-run by hand from the Actions tab.
+  workflow_dispatch:
 
 permissions:
   contents: read
@@ -33,6 +35,12 @@ jobs:
     needs: build
     runs-on: ubuntu-latest
 
+    # actions/deploy-pages requires the job to run in the github-pages environment.
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+
     steps:
       - name: Deploy to GitHub Pages
+        id: deployment
         uses: actions/deploy-pages@v4
