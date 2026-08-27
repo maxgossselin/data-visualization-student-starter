@@ -1,1 +1,21 @@
 @import 'tailwindcss';
+
+/*
+ * Week 1: background stars fade between a fraction of their assigned opacity and
+ * full brightness. Each star sets its own --star-opacity, period, and delay.
+ */
+@keyframes twinkle {
+  from {
+    opacity: calc(var(--star-opacity, 1) * 0.25);
+  }
+  to {
+    opacity: var(--star-opacity, 1);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .starfield circle {
+    animation: none !important;
+    opacity: var(--star-opacity, 1);
+  }
+}
