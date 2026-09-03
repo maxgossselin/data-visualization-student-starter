@@ -15,3 +15,15 @@ How to use, for subsequent assignments:
 - Update the index at `src/assignments/index.ts` to add the new listing
 - Redeploy to GitHub pages
 - Submit the link to your hosted assignment in GitHub pages
+
+## Assignments in this repo
+
+| Week   | Entry                     | Notes                                              |
+| ------ | ------------------------- | -------------------------------------------------- |
+| Week 1 | `src/assignments/week-01` | Six points redrawn as a constellation              |
+| Week 2 | `src/assignments/week-02` | Loads and summarises a real dataset in the browser |
+
+Week 2 reads `public/data/online-food-orders/online-food-orders.csv` at runtime and reports
+row/column counts, per-attribute type and distribution, and data-quality notes. The dataset is
+documented in [`public/data/online-food-orders/README.md`](public/data/online-food-orders/README.md),
+including its source and an attribute-by-attribute type analysis.
