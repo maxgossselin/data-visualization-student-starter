@@ -21,7 +21,7 @@ That reframing is what makes this worth doing rather than redoing. The subway ef
 overnight; taxi and for-hire vehicles do not. There is a crossover hour in every neighborhood where
 the dominant mode changes hands, and I would bet that hour is different in Bushwick than it is in
 Midtown, and different again on a Saturday than on a Tuesday. That difference is a portrait of what
-a neighborhood is *for*.
+a neighborhood is _for_.
 
 **Why this domain.** The data is unusually honest: it is sensor and transaction data rather than
 survey response, it is hourly rather than daily, it covers a decade, and it is still being updated
@@ -39,7 +39,7 @@ exists. A pickup heatmap has been done, and done better than I would do it.
 
 1. **Where is the crossover hour?** For each neighborhood, at what hour does the subway stop being
    the dominant mode and the car fleet take over — and when does it hand back in the morning?
-2. **Does the crossover time classify neighborhoods?** If I cluster areas purely by the *shape* of
+2. **Does the crossover time classify neighborhoods?** If I cluster areas purely by the _shape_ of
    their 24-hour curve, ignoring volume and ignoring location entirely, do recognizable
    neighborhood types fall out — dormitory, business district, nightlife, transit hub, airport?
    Then: does the map of those clusters look like the map of New York I already have in my head?
@@ -50,7 +50,7 @@ exists. A pickup heatmap has been done, and done better than I would do it.
 ### The perturbations (what breaks the rhythm)
 
 4. **What does rain do?** I expect bike share to collapse and for-hire vehicles to surge, with the
-   subway barely moving. If that holds, the *ratio* of those elasticities is a single number that
+   subway barely moving. If that holds, the _ratio_ of those elasticities is a single number that
    describes how substitutable the modes actually are.
 5. **What did congestion pricing do?** NYC's central-business-district congestion charge began in
    January 2025, and TLC added a `cbd_congestion_fee` column to the trip files that year. I have
@@ -58,15 +58,15 @@ exists. A pickup heatmap has been done, and done better than I would do it.
    public data, and the multi-modal view is the one that can show substitution rather than just
    a drop.
 6. **Has the day itself changed shape since 2019?** The subway series reaches back to January 2017,
-   so there is a real pre-2020 baseline. My hypothesis is that the *volume* recovered long before
-   the *shape* did — that the morning peak is now flatter and later, and that this is a
+   so there is a real pre-2020 baseline. My hypothesis is that the _volume_ recovered long before
+   the _shape_ did — that the morning peak is now flatter and later, and that this is a
    better-evidenced claim about remote work than most of the ones I have read.
 
 ### Questions I probably cannot answer, and why
 
 7. **Why did any individual make any individual trip?** None of this data has a person in it. Every
    record is a vehicle or a fare, not a rider with a purpose. Any claim about intent is inference.
-8. **Where did people actually go?** Yellow and green taxi records give a pickup and dropoff *zone*,
+8. **Where did people actually go?** Yellow and green taxi records give a pickup and dropoff _zone_,
    not a route. Subway data gives an entry station and no exit at all. The paths in any flow map I
    draw will be inferred, and I need to say so on the chart rather than in a footnote.
 9. **Who is missing?** Everyone who walked, drove a private car, or could not afford any of this.
@@ -76,13 +76,13 @@ exists. A pickup heatmap has been done, and done better than I would do it.
 
 ### Primary candidates — all verified live and current
 
-| Source | What it gives | Scale / range |
-| --- | --- | --- |
-| [NYC TLC Trip Records](https://www.nyc.gov/site/tlc/about/tlc-trip-record-data.page) | Yellow, green, FHV, and high-volume FHV (Uber/Lyft) trips: pickup/dropoff zone + timestamp, distance, itemized fare | Monthly Parquet, 2009 → May 2026. One month of Uber/Lyft alone is ~500 MB |
-| [MTA Subway Hourly Ridership 2017–2019](https://data.ny.gov/d/t69i-h2me) · [2020–2024](https://data.ny.gov/d/wujg-7c2s) · [2025+](https://data.ny.gov/d/5wq4-mkjj) | Hourly ridership + transfers per station complex, split by fare class, with lat/long | ~223M rows total; current through 27 Aug 2026 |
-| [MTA Bus Hourly Ridership 2020–2024](https://data.ny.gov/d/kv7t-n8in) · [2025+](https://data.ny.gov/d/gxb3-akrn) | Same shape, for bus routes | 152M rows in the 2025+ file alone |
-| [Citi Bike System Data](https://citibikenyc.com/system-data) | Every trip: start/end station, coordinates, timestamps, member vs. casual | Monthly CSV from an [open S3 bucket](https://s3.amazonaws.com/tripdata/index.html), 2013 → present |
-| [NYC Bicycle and Pedestrian Counts](https://data.cityofnewyork.us/d/ct66-47at) | Automated counter readings by sensor, mode, direction, timestamp | The only foot-traffic signal in the set |
+| Source                                                                                                                                                             | What it gives                                                                                                       | Scale / range                                                                                      |
+| ------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------- |
+| [NYC TLC Trip Records](https://www.nyc.gov/site/tlc/about/tlc-trip-record-data.page)                                                                               | Yellow, green, FHV, and high-volume FHV (Uber/Lyft) trips: pickup/dropoff zone + timestamp, distance, itemized fare | Monthly Parquet, 2009 → May 2026. One month of Uber/Lyft alone is ~500 MB                          |
+| [MTA Subway Hourly Ridership 2017–2019](https://data.ny.gov/d/t69i-h2me) · [2020–2024](https://data.ny.gov/d/wujg-7c2s) · [2025+](https://data.ny.gov/d/5wq4-mkjj) | Hourly ridership + transfers per station complex, split by fare class, with lat/long                                | ~223M rows total; current through 27 Aug 2026                                                      |
+| [MTA Bus Hourly Ridership 2020–2024](https://data.ny.gov/d/kv7t-n8in) · [2025+](https://data.ny.gov/d/gxb3-akrn)                                                   | Same shape, for bus routes                                                                                          | 152M rows in the 2025+ file alone                                                                  |
+| [Citi Bike System Data](https://citibikenyc.com/system-data)                                                                                                       | Every trip: start/end station, coordinates, timestamps, member vs. casual                                           | Monthly CSV from an [open S3 bucket](https://s3.amazonaws.com/tripdata/index.html), 2013 → present |
+| [NYC Bicycle and Pedestrian Counts](https://data.cityofnewyork.us/d/ct66-47at)                                                                                     | Automated counter readings by sensor, mode, direction, timestamp                                                    | The only foot-traffic signal in the set                                                            |
 
 ### Joining them — the technical spine
 
@@ -126,7 +126,7 @@ week 11.
 
 - **[Todd Schneider — "Analyzing 1.1 Billion NYC Taxi and Uber Trips, with a Vengeance"](https://toddwschneider.com/posts/analyzing-1-1-billion-nyc-taxi-and-uber-trips-with-a-vengeance/)**
   — the canonical treatment, and the standard I would be measured against. It covers taxi vs. Uber
-  substitution thoroughly. What it does *not* do is bring the subway, bus, and bike systems into the
+  substitution thoroughly. What it does _not_ do is bring the subway, bus, and bike systems into the
   same frame, and it is static rather than interactive. That gap is where my project lives.
 - **[Chris Whong — "NYC Taxis: A Day in the Life"](https://chriswhong.github.io/nyctaxi/)** — follows
   a single cab through a single day. The opposite altitude from mine, and a good reminder that one
@@ -137,7 +137,7 @@ week 11.
 - **[Nathan Yau — "A Day in the Life of Americans"](https://flowingdata.com/2015/12/15/a-day-in-the-life-of-americans/)**
   and **["A Day in the Life: Work and Home"](https://flowingdata.com/2017/05/17/american-workday/)**
   — the closest thing to what I want emotionally: a 24-hour cycle you watch rather than read, built
-  from the American Time Use Survey. The animation makes the rhythm *felt* in a way a line chart
+  from the American Time Use Survey. The animation makes the rhythm _felt_ in a way a line chart
   does not.
 - **[deck.gl Trips Layer](https://deck.gl/examples/trips-layer)** — the reference implementation for
   animated movement over a basemap, and a useful reality check on what it costs to render.
@@ -156,9 +156,65 @@ and entry-only subway data are both easy to draw more confidently than they dese
 
 ## 5. Sketches
 
-
 ![](images/rhythm-sketch-1.jpg)
 
 ![](images/rhythm-sketch-2.jpg)
 
+## 6. Task Analysis
 
+What the visualization has to let someone do, stated independently of what it looks like. Nothing
+below names a chart, an axis, or an interaction — that is the point. A task like "compare the
+morning peak against the evening peak" could be served by two small maps side by side, a slope
+chart, a matrix, or an animation, and choosing between those is a later decision that should be
+argued on the merits rather than assumed now.
+
+**Who has these goals.** People who already know New York and carry a mental model of it — they
+know Midtown empties at night and that some neighborhoods only start moving at 11pm. The value is
+in the places where the data disagrees with what they expect.
+
+### Goals
+
+The higher-level reasons someone would come to this at all:
+
+- **G1. Build an accurate picture of the shape of the city's day**, as distinct from its total
+  volume. Most transit coverage reports totals; the shape is the part that carries meaning.
+- **G2. Test a belief they already hold.** Find one specific neighborhood and confirm or overturn
+  what they assume about how it behaves.
+- **G3. Understand whether the modes compete or complement.** Decide whether New York has one
+  circulatory system or four that hand off to each other.
+- **G4. Attribute a change to a cause.** Connect a departure from the usual rhythm to weather, a
+  policy, an event, or the slow shift since 2019.
+
+### Tasks
+
+The specific things a reader must be able to do. Each says what the trend is and what would count
+as actually finding it.
+
+**T1. Summarize the daily cycle in mode share.** Whether the mix of modes carrying a neighborhood
+rises and falls over 24 hours, and where one mode overtakes another. Found if the crossover hour is
+stable within a neighborhood and clearly different between neighborhoods. _(G1, G3)_
+
+**T2. Compare 24-hour profiles across zones to find recurring shapes.** Whether the 263 zones
+collapse into a few families of curve. Found if a handful of shapes account for most zones, and
+those shapes match recognizable kinds of place — dormitory, business district, nightlife, transit
+hub, airport. _(G1, G2)_
+
+**T3. Compare the morning peak against the evening peak.** Whether the evening is the morning
+reversed. I expect not: arrivals are coordinated by employers and departures are not, so the
+evening should be flatter and smeared across more hours. _(G1)_
+
+**T4. Query what happens to one mode when another is suppressed.** When rain, a holiday, or
+congestion pricing pushes trips off one mode, whether they turn up in another or simply vanish.
+Found if a drop in one series is matched in time by a rise in another. _(G3, G4)_
+
+**T5. Search for departures from the usual shape, at two scales.** Single hours that break a zone's
+own curve — a game, a storm, a service outage — and the slower question of whether the shape of the
+whole day has shifted since 2019, with the morning peak flatter and later. The subway series
+reaches back to 2017, so the baseline exists to compare against. _(G2, G4)_
+
+### Lookup, not just overview
+
+One task cuts across all five and is easy to leave out: **retrieve a value for a named place and
+hour.** Whatever form this takes, someone has to be able to find their own neighborhood at 6pm on a
+Tuesday and read the actual number, not just see a shape. Without that, none of the goals above
+survive contact with a reader who wants to check the claim.
