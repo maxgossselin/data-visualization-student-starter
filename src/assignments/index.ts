@@ -2,6 +2,7 @@ import type { ComponentType } from 'react';
 import { ConstellationPlot } from './week-01/ConstellationPlot';
 import { DatasetSummary } from './week-02/DatasetSummary';
 import { AgeFamilyScatter } from './week-03/AgeFamilyScatter';
+import { AgeFamilySizePlot } from './week-04/AgeFamilySizePlot';
 
 export interface Assignment {
   id: string;
@@ -25,8 +26,13 @@ export const assignments: Assignment[] = [
     name: 'Week 3',
     component: AgeFamilyScatter,
   },
+  {
+    id: '4',
+    name: 'Week 4',
+    component: AgeFamilySizePlot,
+  },
 ];
 
 export const assignmentsMap = new Map(assignments.map((ex) => [ex.id, ex]));
 
-export const defaultAssignment = '3';
+export const defaultAssignment = '4';
