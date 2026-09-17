@@ -218,3 +218,65 @@ One task cuts across all five and is easy to leave out: **retrieve a value for a
 hour.** Whatever form this takes, someone has to be able to find their own neighborhood at 6pm on a
 Tuesday and read the actual number, not just see a shape. Without that, none of the goals above
 survive contact with a reader who wants to check the claim.
+
+## 7. Validation
+
+Munzner's nested model says the same project can fail in four unrelated ways, and that each failure needs its own kind of evidence. The point of this section is not to claim the project is validated. it is to write down, before building anything, what would count as being wrong at each level, and what I would have to do to find out.
+
+
+### The imagined user
+ My **primary user is an informed New York resident** someone from the city and who commutes enough to have opinions about the subway at 11pm. 
+
+My **secondary user is a transit-beat reporter or an advocacy researcher** — someone who needs to check a claim ("did congestion pricing push people onto the subway or just out of Manhattan?") and who would use this to find a story rather than to finish one. This user matters because they have a real task that exists whether or not I build anything, which is a useful discipline.
+
+
+### Level 1 — Domain situation
+
+**What I could get wrong.** That the crossover hour is a concept I find interesting rather than one anyone else does. I did the framing in §1 and then built a task analysis on top of it, which is exactly the loop the nested model warns about — the designer as their own user, mistaking their curiosity for a need. The more likely real question a New Yorker has is narrower and more selfish: is my commute getting worse, and is it worse than everyone else's?
+
+**Upstream — before building.** Observe rather than ask. The cheapest useful method is to have five
+or six New Yorkers **predict their own neighborhood's 24-hour curve by drawing it**, before seeing any data, then talk through what surprised them. That elicits the mental model directly instead of asking them to describe it, and it tells me whether the gap between belief and data.
+
+**Downstream — after deploying.** A field study rather than a lab study: put it somewhere public and watch what people actually do with it, not what they do when I hand them a task. The signals I would look for are which zones get looked up (their own? or the famous ones?), whether anyone uses the public transportation.
+
+### Level 2 — Abstraction
+
+This is the level where I think this project is genuinely most at risk, and it is also the level where a lab study cannot help me.
+
+**The data abstraction, and why it is a choice.** I am not drawing the data I was given. The raw material is ~223M rows of subway entries, 152M of bus, and roughly 500 MB per month of Uber and Lyft trips. What I actually intend to draw is a small derived cube keyed by **`(taxi zone, hour, mode, day type)`**, carrying a normalized share and two further derived attributes: a **crossover hour** per zone, and a **categorical curve type** per zone produced by clustering the shape. Every one of those is an invention. None of them exist in the source files.
+
+**What I could get wrong, concretely:**
+
+- **The join does not compare like with like.** A taxi pickup is where a person physically was. A subway entry is where a person walked to, which can be half a mile away, and the zone boundary will absorb that walk differently in Midtown than in Bay Ridge. If the two modes are measuring different spatial things, then every crossover hour is partly a geometry artifact, and the neighborhood typology in T2 is clustering my join error.
+-
+- **Normalization changes the answer.** Raw counts, per-resident, or share-of-that-zone's-own-daily total are three different maps, and only the third one actually isolates _shape_ from _volume_, which is what G1 claims to be about.
+- **The task abstraction may be the wrong shape.** T1–T5 are mine. If the real task is lookup — "my neighborhood, 6pm, Tuesday, what is the number" — then the overview-first structure is backwards, and the best encoding in the world will not fix it. I hedged toward this already in §6 with the "lookup, not just overview" note, which in hindsight reads like an abstraction I do not fully believe in yet.
+
+
+**Downstream.** This is the level Munzner is most explicit about: **task abstractions are very hard
+to validate with controlled experiments**, because a lab study works by telling people what to do,
+which assumes the answer. The only real evidence is watching people use it in a realistic setting
+and seeing which questions they actually bring to it. If the reporter never touches the typology
+view and goes straight to a single-zone time series every time, my task abstraction was wrong no
+matter how well the typology view tested in a lab.
+
+### Level 3 — Idiom
+
+**The candidates.** For encoding: a radial 24-hour clock or a linear line chart
+
+- **The radial clock is the biggest risk, and it is my favorite idea** — §4 says outright that I want "the cycle as the primary form." But angle and arc length are weak channels for precise comparison next to aligned position, so the form that best conveys _cyclicality_ is close to the worst one for T3, which is an explicit precision comparison of morning against evening. Wanting the form is not a reason.
+- **Animated flow maps communicate motion and little else.** Two moments in time cannot be compared
+  when one of them is a memory, so an animation cannot serve T3 or T4 no matter how good it looks.
+- **Crossover hour is cyclic data.** Hour 23 and hour 0 are adjacent, so a sequential ramp will
+  draw a hard seam across the map exactly where there is no discontinuity. It needs a cyclic
+  colormap, and this is the kind of error that looks like a finding.
+- **Inferred routes drawn as confident arcs** assert precision the data does not have — the exact
+  failure §4 says I want to avoid by "stating the limits on the chart itself."
+
+
+### Level 4 — Algorithm
+
+
+**The decision the model surfaces.** The idiom level's need for immediate response is what dictates the architecture: all of the expensive work goes offline, and the browser only ever receives the aggregate cube. That cube is 263 zones × 24 hours × ~5 modes × a few day types — low hundreds of thousands of rows, a few megabytes — which is small enough that every interaction is a filter over data already in memory.
+
+
