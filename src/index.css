@@ -19,3 +19,17 @@
     opacity: var(--star-opacity, 1);
   }
 }
+
+/*
+ * Week 5: the colour legend's chips are focusable SVG rects, so they carry their own
+ * focus ring in the chart's ink rather than the browser's accent colour.
+ *
+ * It has to be a CSS rule rather than something the renderer sets on the node. Focus
+ * moves the legend's selection, the selection redraws the legend, and the redraw would
+ * wipe a stroke that had been written as an attribute - the ring would appear and
+ * vanish in the same frame. A style rule is immune to that, and :focus-visible keeps
+ * the ring off a chip that was merely clicked.
+ */
+.color-legend .chip-hit:focus-visible {
+  stroke: #0b0b0b;
+}

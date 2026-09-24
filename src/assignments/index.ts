@@ -3,6 +3,7 @@ import { ConstellationPlot } from './week-01/ConstellationPlot';
 import { DatasetSummary } from './week-02/DatasetSummary';
 import { AgeFamilyScatter } from './week-03/AgeFamilyScatter';
 import { AgeFamilySizePlot } from './week-04/AgeFamilySizePlot';
+import { AgeFamilyStatusPlot } from './week-05/AgeFamilyStatusPlot';
 
 export interface Assignment {
   id: string;
@@ -31,8 +32,13 @@ export const assignments: Assignment[] = [
     name: 'Week 4',
     component: AgeFamilySizePlot,
   },
+  {
+    id: '5',
+    name: 'Week 5',
+    component: AgeFamilyStatusPlot,
+  },
 ];
 
 export const assignmentsMap = new Map(assignments.map((ex) => [ex.id, ex]));
 
-export const defaultAssignment = '4';
+export const defaultAssignment = '5';
