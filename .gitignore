@@ -22,3 +22,6 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+# Cached raw downloads for scripts/build-rhythm-cube.sh
+.cache

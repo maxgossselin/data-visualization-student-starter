@@ -223,12 +223,11 @@ survive contact with a reader who wants to check the claim.
 
 Munzner's nested model says the same project can fail in four unrelated ways, and that each failure needs its own kind of evidence. The point of this section is not to claim the project is validated. it is to write down, before building anything, what would count as being wrong at each level, and what I would have to do to find out.
 
-
 ### The imagined user
- My **primary user is an informed New York resident** someone from the city and who commutes enough to have opinions about the subway at 11pm. 
+
+My **primary user is an informed New York resident** someone from the city and who commutes enough to have opinions about the subway at 11pm.
 
 My **secondary user is a transit-beat reporter or an advocacy researcher** — someone who needs to check a claim ("did congestion pricing push people onto the subway or just out of Manhattan?") and who would use this to find a story rather than to finish one. This user matters because they have a real task that exists whether or not I build anything, which is a useful discipline.
-
 
 ### Level 1 — Domain situation
 
@@ -252,7 +251,6 @@ This is the level where I think this project is genuinely most at risk, and it i
 - **Normalization changes the answer.** Raw counts, per-resident, or share-of-that-zone's-own-daily total are three different maps, and only the third one actually isolates _shape_ from _volume_, which is what G1 claims to be about.
 - **The task abstraction may be the wrong shape.** T1–T5 are mine. If the real task is lookup — "my neighborhood, 6pm, Tuesday, what is the number" — then the overview-first structure is backwards, and the best encoding in the world will not fix it. I hedged toward this already in §6 with the "lookup, not just overview" note, which in hindsight reads like an abstraction I do not fully believe in yet.
 
-
 **Downstream.** This is the level Munzner is most explicit about: **task abstractions are very hard
 to validate with controlled experiments**, because a lab study works by telling people what to do,
 which assumes the answer. The only real evidence is watching people use it in a realistic setting
@@ -273,10 +271,117 @@ matter how well the typology view tested in a lab.
 - **Inferred routes drawn as confident arcs** assert precision the data does not have — the exact
   failure §4 says I want to avoid by "stating the limits on the chart itself."
 
-
 ### Level 4 — Algorithm
-
 
 **The decision the model surfaces.** The idiom level's need for immediate response is what dictates the architecture: all of the expensive work goes offline, and the browser only ever receives the aggregate cube. That cube is 263 zones × 24 hours × ~5 modes × a few day types — low hundreds of thousands of rows, a few megabytes — which is small enough that every interaction is a filter over data already in memory.
 
+---
 
+## 8. V1 — the handoff, built
+
+**Where it is:** [`src/assignments/week-06`](../src/assignments/week-06), running as Week 6 in the
+deployed site (`?example=6`). The pipeline behind it is
+[`scripts/build-rhythm-cube.sh`](../scripts/build-rhythm-cube.sh); the cube it writes is in
+[`public/data/nyc-rhythm/`](../public/data/nyc-rhythm).
+
+This is a first rough version of **T1 — summarize the daily cycle in mode share**, which §6 calls the
+core thread. It covers one month (June 2025), three modes, and the lookup task; it does not attempt
+the typology (T2), the morning-against-evening comparison (T3), the perturbations (T4), or the
+shift since 2019 (T5).
+
+### What it does
+
+One taxi zone's 24 hours drawn as a 100% stacked area, subway against the baseline, so the hour the
+subway's band crosses the half line is the hour the taxi and for-hire fleets together start carrying
+more of the zone than it does. That hour is marked on the mark with the time printed on it. Below,
+the busiest zones that hand over are shown as small multiples ordered by when they do it, which
+doubles as the picker. Weekday and weekend are a toggle; hovering any hour gives every mode's share
+and its actual count.
+
+Three decisions worth recording, because each one was a choice the document had left open:
+
+- **The day starts at 04:00, not midnight.** §7 flagged that crossover hour is cyclic data and that
+  a seam drawn in the wrong place looks like a finding. The handoff happens at night, so a midnight
+  origin cuts the story in half. 04:00 is the trough of the subway's day in every zone checked.
+- **Stacked bands, not lines.** §7 Level 3 argued for aligned position over angle, and that still
+  holds, but three _lines_ fail for a different reason: the subway carries 85–95% of a residential
+  zone's morning, which pins the other two to the floor. Stacked, every mode keeps a visible band,
+  and the subway's own edge is the thing being read against the half line.
+- **The crossover is one line crossing one threshold.** Because the three shares sum to one,
+  "the subway carries more than the car fleet combined" is exactly "the subway is above a half". The
+  50% rule is therefore the handoff itself rather than a decoration.
+
+### What it settled
+
+**The join works, and it was the right thing to test first.** §3 said the single `(taxi zone, hour)`
+key "is the whole project" and §7 said the biggest risk was that the join does not compare like with
+like. Mechanically it is clean: all 428 subway station complexes land in exactly one taxi zone by
+point-in-polygon, with no manual crosswalk and nothing unmatched. 153 of the 263 zones contain at
+least one complex.
+
+**The architecture holds.** ~25M trip records and a month of hourly ridership reduce to 12,624 rows
+and 365 KB. Every interaction in the browser is a filter over data already in memory, as §7 Level 4
+assumed it would have to be.
+
+**The crossover hour does separate neighbourhoods — but into three groups, not a continuum.** Of the
+173 zones with at least 2,000 trips on a typical weekday:
+
+|                  | zones | what they are                                                                  |
+| ---------------- | ----- | ------------------------------------------------------------------------------ |
+| Hand over        | 111   | The subway leads by day and loses the night, mostly between 21:00 and midnight |
+| Never hand over  | 38    | The subway carries more than half of _every_ hour — the big interchanges       |
+| Never reach half | 24    | Airports and places the subway does not really serve                           |
+
+That three-way split is itself the first result for T2, and it arrived without any clustering: the
+shape of the question produced the classes.
+
+**The Manhattan core holds out longest.** Residential outer-borough zones hand over around 22:00–00:00;
+Midtown South at 01:55, Times Square at 02:24. The hypothesis in §1 — that the crossover hour differs
+between Bushwick and Midtown — is supported, and the direction is the one predicted.
+
+**Weekends loosen the subway's grip.** 127 zones hand over rather than 111, and only 16 hold all day
+rather than 38. The morning handback moves later: East Village returns to the subway at 04:59 on a
+weekday and 05:55 on a weekend. §1 guessed Saturday would differ from Tuesday; it does, and more in
+the shape of the night than in the volume of the day.
+
+### What it did not settle, and what that costs
+
+**The unit mismatch is unresolved and it bounds every number on the chart.** The subway figure counts
+people through a turnstile; the taxi and for-hire figures count vehicles, each carrying one or more.
+The half line is therefore not a headcount. The handoff times are sound _relative to each other_ —
+which is what the neighbourhood comparison needs — but not as absolutes, and no amount of design
+fixes this. It is stated on the chart rather than in a footnote, per §4. Resolving it needs an
+occupancy assumption for for-hire trips, and that assumption should be visible and adjustable rather
+than baked in.
+
+**The geometry artifact §7 predicted is real, and I can now point at it.** Midtown Center is the
+single highest-volume taxi zone in New York and holds exactly one small station complex, because the
+big ones sit over its borders in the Garment District and Midtown East. It therefore reads as
+"handing over at 18:55" for cartographic reasons rather than behavioural ones. The V1 does not solve
+this; it surfaces each zone's complex count so the reader can catch it. The real fix is a catchment
+that is not the taxi zone — a walk-radius around each complex, or an areal reapportionment — and
+that is now a known piece of work rather than a worry.
+
+**Two modes are missing, for a stated reason.** Bus and Citi Bike are deferred. A stacked or line
+form puts every series beside every other one, so the palette has to separate on all pairs, and the
+validated palette this repo has used since Week 2 holds three slots to that standard. Adding a fourth
+hue would put two confusable colours on the axes the chart exists to read a crossing off. Bringing
+them in means either faceting or dropping the single-chart form.
+
+### What this changes about the plan
+
+1. **T2 is cheaper than it looked.** The three-way split falls out of T1's own threshold, so the
+   typology work can start from "what distinguishes the 111 from each other" rather than from
+   clustering 263 raw curves.
+2. **The catchment problem is promoted.** It was a §7 worry; it is now a specific, reproducible
+   artifact with a named example, and it should be fixed before any map is drawn — a choropleth of
+   crossover hour would render that artifact as geography and make it look like a finding.
+3. **"Lookup, not just overview" earned its place.** The hover readout giving both share and count is
+   the thing that makes the caveat survivable: a reader who distrusts the half line can read the two
+   raw numbers and judge for themselves. §6 hedged on whether that task was real; it is, and it is
+   load-bearing rather than a nicety.
+4. **The radial clock is now a harder sell.** §4 wanted the cycle as the primary form and §7 admitted
+   that wanting it is not a reason. Having drawn the linear version, the thing that makes it work is
+   reading the subway edge against a straight horizontal rule. A radial version would have to replace
+   that rule with a circle, and comparing a curve against a circle is the comparison this chart is
+   least able to afford to lose.
