@@ -27,6 +27,7 @@ How to use, for subsequent assignments:
 | Week 5 | `src/assignments/week-05` | The Week 4 chart with an interactive colour legend         |
 | Week 6 | `src/assignments/week-06` | Project V1: when the subway hands New York to the cars     |
 | Week 7 | `src/assignments/week-07` | Recreation of Ferdio's sorted stream graph (#42)           |
+| Week 8 | `src/assignments/week-08` | Project V2: the handoff map, with its assumptions exposed  |
 
 Week 2 reads `public/data/online-food-orders/online-food-orders.csv` at runtime and reports
 row/column counts, per-attribute type and distribution, and data-quality notes. The dataset is
@@ -141,3 +142,15 @@ colours, scale, gaps, and curve were measured from the pixels, and an overlay at
 scale matches the original. A toggle shows the same data without the per-year sort, which
 is the design choice that turns Denmark overtaking Norway into the chart's headline.
 Sources and method are in [`src/assignments/week-07/README.md`](src/assignments/week-07/README.md).
+
+## Week 8 — project V2: the handoff map
+
+`src/assignments/week-08` draws the Week 6 handoff for every taxi zone at once, as a choropleth
+linked to the Week 6 chart. Week 6 left two problems unresolved, and both are now settings the
+reader can change: which zone a subway station's riders belong to (a quarter- or half-mile walk
+circle rather than the zone the station sits in), and how many people a car trip carries (opening
+at the measured 1.31 per yellow-cab trip). A "what moved" list and a stability toggle show which
+parts of the map hold under every setting. The catchment fix moves Midtown Center's handoff from
+18:55 to 00:39, and cuts Week 6's 38 "subway all day" zones to 18. Details, findings and sources
+are in [`src/assignments/week-08/README.md`](src/assignments/week-08/README.md), and the project
+document's [§9](docs/FINAL_PROJECT_EXPLORATION_1.md#9-v2--the-map-and-the-two-assumptions).

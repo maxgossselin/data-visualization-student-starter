@@ -385,3 +385,73 @@ them in means either faceting or dropping the single-chart form.
    reading the subway edge against a straight horizontal rule. A radial version would have to replace
    that rule with a circle, and comparing a curve against a circle is the comparison this chart is
    least able to afford to lose.
+
+---
+
+## 9. V2 — the map, and the two assumptions
+
+**Where it is:** [`src/assignments/week-08`](../src/assignments/week-08), running as Week 8 in the
+deployed site (`?example=8`).
+
+§8 ended with two unresolved problems and a rule. The problems were the catchment (a station
+counts only in the zone its coordinate falls in) and the units (people through a turnstile against
+car trips). The rule was that the catchment had to be fixed before any map was drawn. V2 fixes the
+catchment, turns both assumptions into settings, and then draws the map.
+
+### What changed
+
+- **Catchment.** Each station complex's riders are now spread over a walk circle around it, a
+  quarter or half mile, in proportion to how much of the circle each zone covers. That's one
+  extra `ST_Buffer` / `ST_Intersection` join in the pipeline, and every complex's riders are still
+  counted exactly once. Week 6's point-in-polygon join stays available as the third option.
+- **Units.** An occupancy setting converts car trips to people. It opens at **1.31**, the measured
+  mean passengers on a June 2025 yellow-cab trip, taken from the 71% of trips that record a count.
+  Uber and Lyft publish no count, so they borrow the yellow-cab figure, and the page says so.
+- **Form.** A choropleth of handoff hour across every zone, binned on a validated one-hue ramp,
+  linked to the V1 chart for whichever zone is clicked. §7 warned that handoff hour is cyclic.
+  The bins are measured from the 04:00 origin V1 already argued for, so they never wrap midnight
+  and the seam falls where nothing hands over.
+
+### What it settled
+
+**The catchment was the bigger flaw.** Occupancy moves every zone's handoff about 40 minutes
+earlier and barely reorders them (rank correlation 0.97 against V1). The catchment reorders them
+substantially (about 0.62). Midtown Center, the artifact §8 named, moves from 18:55 to 00:39. Murray
+Hill, SoHo and both Turtle Bay zones were "cars all day" in V1 only because no station coordinate
+fell inside them; they now hand over after midnight.
+
+**V1's interchanges were mostly a units artifact.** §8 reported 38 zones where the subway leads
+every hour and called them "the big interchanges". Counted in people and by walk, there are 18.
+In 51 zones the subway's overnight lead is thin enough that the settings decide whether it hands
+over at all.
+
+| Weekday, 173 busy zones         | Hand over | Subway all day | Cars all day | Median handoff |
+| ------------------------------- | --------- | -------------- | ------------ | -------------- |
+| V1: station's zone, vehicles    | 111       | 38             | 24           | 23:29          |
+| Station's zone, 1.31 per trip   | 126       | 23             | 24           | 23:01          |
+| ¼-mile walk, 1.31 per trip (V2) | 142       | 18             | 13           | 22:58          |
+| ½-mile walk, 1.31 per trip      | 149       | 17             | 7            | 22:59          |
+
+**Whether a zone hands over is robust; the minute is not.** 104 of 173 zones give the same kind of
+answer under all six settings (132 at weekends). Their handoff time spans a median of 1.7 hours
+across the settings, which is more than a one-hour colour bin can honestly hold. The page now
+shows each zone's range across the six settings, and has a toggle that fades zones whose answer
+depends on them. What's left after fading is mostly the outer boroughs. The Manhattan core is the
+part of the map the method can't yet settle.
+
+**The city-level answer holds.** The weekday median handoff stays between 22:58 and 23:29 under all
+six settings. §1's guess that Bushwick and Midtown differ holds too: Manhattan's median is around
+00:35, while the Bronx, Brooklyn and Queens hand over between 22:00 and 23:00.
+
+### What this changes about the plan
+
+1. **Report ranges, not minutes.** The headline numbers should be the ones that survive the
+   settings: kinds of zone, medians, and orderings between boroughs. A single zone's handoff should
+   be quoted as a range.
+2. **The Manhattan core needs a better catchment, not a better chart.** It is where stations are
+   densest and walk circles overlap most, so evenly spread circles are least true there. A walkshed
+   along the street network is the next piece of pipeline work.
+3. **T2's typology should cluster on the robust part.** V1 proposed starting T2 from "what
+   distinguishes the 111"; that population has itself moved by 30 zones. Clustering should use
+   what holds across the settings, such as the shape of the subway's share curve, rather than one
+   setting's crossover minute.
