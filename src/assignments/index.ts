@@ -5,6 +5,7 @@ import { AgeFamilyScatter } from './week-03/AgeFamilyScatter';
 import { AgeFamilySizePlot } from './week-04/AgeFamilySizePlot';
 import { AgeFamilyStatusPlot } from './week-05/AgeFamilyStatusPlot';
 import { RhythmHandoffPlot } from './week-06/RhythmHandoffPlot';
+import { SortedStreamPlot } from './week-07/SortedStreamPlot';
 
 export interface Assignment {
   id: string;
@@ -43,8 +44,13 @@ export const assignments: Assignment[] = [
     name: 'Week 6',
     component: RhythmHandoffPlot,
   },
+  {
+    id: '7',
+    name: 'Week 7',
+    component: SortedStreamPlot,
+  },
 ];
 
 export const assignmentsMap = new Map(assignments.map((ex) => [ex.id, ex]));
 
-export const defaultAssignment = '6';
+export const defaultAssignment = '7';

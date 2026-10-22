@@ -26,6 +26,7 @@ How to use, for subsequent assignments:
 | Week 4 | `src/assignments/week-04` | The Week 3 chart rebuilt for legibility, with d3-axis axes |
 | Week 5 | `src/assignments/week-05` | The Week 4 chart with an interactive colour legend         |
 | Week 6 | `src/assignments/week-06` | Project V1: when the subway hands New York to the cars     |
+| Week 7 | `src/assignments/week-07` | Recreation of Ferdio's sorted stream graph (#42)           |
 
 Week 2 reads `public/data/online-food-orders/online-food-orders.csv` at runtime and reports
 row/column counts, per-attribute type and distribution, and data-quality notes. The dataset is
@@ -129,3 +130,14 @@ are cached in a gitignored `.cache/`, so a second run only redoes the join.
   band chart puts every series beside every other one, and the validated palette holds
   three slots to that standard. A fourth hue would put two confusable colours on the axes
   the chart exists to read a crossing off.
+
+## Week 7 — recreating a reference
+
+`src/assignments/week-07` rebuilds visualization #42, a sorted stream graph, from
+Ferdio's [_1 dataset. 100 visualizations._](https://100.datavizproject.com/) in React and D3.
+That project is closed source, so the rebuild was reverse-engineered from the
+[published image](https://100.datavizproject.com/wp-content/uploads/viz/viz-42.png): its
+colours, scale, gaps, and curve were measured from the pixels, and an overlay at the same
+scale matches the original. A toggle shows the same data without the per-year sort, which
+is the design choice that turns Denmark overtaking Norway into the chart's headline.
+Sources and method are in [`src/assignments/week-07/README.md`](src/assignments/week-07/README.md).
